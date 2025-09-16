@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Staff Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="p-4">
+    <h2>Staff Dashboard</h2>
+
+    <hr>
+    <h4>Customers</h4>
+    <table class="table table-bordered">
+        <tr><th>Username</th><th>Phone</th><th>Address</th></tr>
+        {% for c in customers %}
+        <tr><td>{{ c.user.username }}</td><td>{{ c.phone }}</td><td>{{ c.address }}</td></tr>
+        {% endfor %}
+    </table>
+
+    <hr>
+    <h4>Rooms</h4>
+    <a href="{% url 'add_room' %}" class="btn btn-success btn-sm mb-2">Add Room</a>
+   
+
+    <table class="table table-bordered">
+        <tr><th>Room #</th><th>Type</th><th>Available</th><th>Price</th><th>Actions</th></tr>
+        {% for r in rooms %}
+        <tr>
+            <td>{{ r.room_number }}</td>
+            <td>{{ r.room_type }}</td>
+            <td>{{ r.is_available }}</td>
+            <td>{{ r.price_per_night }}</td>
+            <td>
+                <a href="{% url 'update_room' r.id %}" class="btn btn-primary btn-sm">Edit</a>
+                <a href="{% url 'delete_room' r.id %}" class="btn btn-danger btn-sm">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <hr>
+    <h4>Bookings</h4>
+    <table class="table table-bordered">
+        <tr><th>Customer</th><th>Room</th><th>Check-in</th><th>Check-out</th><th>Status</th><th>Actions</th></tr>
+        {% for b in bookings %}
+        <tr>
+            <td>{{ b.customer.user.username }}</td>
+            <td>{{ b.room.room_number }}</td>
+            <td>{{ b.check_in }}</td>
+            <td>{{ b.check_out }}</td>
+            <td>
+                {% if b.is_checked_in %}
+                    {% if b.is_checked_out %}
+                        Checked Out
+                    {% else %}
+                        Checked In
+                    {% endif %}
+                {% else %}
+                    Not Checked In
+                {% endif %}
+            </td>
+            <td>
+                {% if not b.is_checked_in %}
+                <a href="{% url 'check_in' b.id %}" class="btn btn-success btn-sm">Check In</a>
+                {% endif %}
+                {% if b.is_checked_in and not b.is_checked_out %}
+                <a href="{% url 'check_out' b.id %}" class="btn btn-warning btn-sm">Check Out</a>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
